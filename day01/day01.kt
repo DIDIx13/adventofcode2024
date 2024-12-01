@@ -2,21 +2,40 @@ import java.io.File
 import kotlin.math.abs
 
 fun main() {
-    // Define the path to the input file
     val inputFilePath = "input"
 
-    // Initialize lists to store the location IDs from the left and right groups
+    // Read and parse the input file
+    val (leftList, rightList) = readInput(inputFilePath) ?: return
+
+    // Calculate Total Distance (Part One)
+    val totalDistance = calculateTotalDistance(leftList, rightList)
+
+    // Calculate Similarity Score (Part Two)
+    val similarityScore = calculateSimilarityScore(leftList, rightList)
+
+    // Output the Results
+    println("=== Results ===")
+    println("Total Distance (Part One): $totalDistance")
+    println("Similarity Score (Part Two): $similarityScore")
+}
+
+/**
+ * Reads the input file and separates the data into two lists.
+ *
+ * @param filePath The path to the input file.
+ * @return A Pair containing the left and right lists, or null if an error occurs.
+ */
+fun readInput(filePath: String): Pair<List<Int>, List<Int>>? {
     val leftList = mutableListOf<Int>()
     val rightList = mutableListOf<Int>()
 
-    // Attempt to read the input file
     try {
-        val file = File(inputFilePath)
+        val file = File(filePath)
 
         // Check if the file exists
         if (!file.exists()) {
-            println("Error: The file '$inputFilePath' does not exist.")
-            return
+            println("Error: The file '$filePath' does not exist.")
+            return null
         }
 
         // Read the file line by line
@@ -30,7 +49,6 @@ fun main() {
                 val left = parts[0].toIntOrNull()
                 val right = parts[1].toIntOrNull()
 
-                // Add the numbers to their respective lists if conversion is successful
                 if (left != null && right != null) {
                     leftList.add(left)
                     rightList.add(right)
@@ -44,25 +62,47 @@ fun main() {
 
     } catch (e: Exception) {
         println("An error occurred while reading the file: ${e.message}")
-        return
+        return null
     }
 
-    // Check that both lists have the same number of elements
+    // Validate that both lists have the same number of elements
     if (leftList.size != rightList.size) {
         println("Error: The left and right lists must have the same number of elements.")
         println("Left list size: ${leftList.size}, Right list size: ${rightList.size}")
-        return
+        return null
     }
 
-    // Sort both lists in ascending order
-    leftList.sort()
-    rightList.sort()
+    return Pair(leftList, rightList)
+}
 
-    // Calculate the total distance by summing the absolute differences of paired elements
-    val totalDistance = leftList.zip(rightList)
-        .map { (left, right) -> abs(left - right) }
-        .sum()
+/**
+ * Calculates the total distance between two lists by pairing sorted elements.
+ *
+ * @param leftList The first list of integers.
+ * @param rightList The second list of integers.
+ * @return The total distance as an integer.
+ */
+fun calculateTotalDistance(leftList: List<Int>, rightList: List<Int>): Int {
+    val sortedLeft = leftList.sorted()
+    val sortedRight = rightList.sorted()
 
-    // Print the total distance
-    println("Total Distance: $totalDistance")
+    return sortedLeft.zip(sortedRight)
+        .sumOf { (left, right) -> abs(left - right) }
+}
+
+/**
+ * Calculates the similarity score by summing each number in the left list
+ * multiplied by its frequency in the right list.
+ *
+ * @param leftList The first list of integers.
+ * @param rightList The second list of integers.
+ * @return The similarity score as an integer.
+ */
+fun calculateSimilarityScore(leftList: List<Int>, rightList: List<Int>): Int {
+    val rightFrequencyMap = rightList.groupingBy { it }.eachCount()
+
+    return leftList.sumOf { number ->
+        val frequency = rightFrequencyMap[number] ?: 0
+        number * frequency
+    }
 }
