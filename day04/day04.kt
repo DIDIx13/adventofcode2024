@@ -1,7 +1,7 @@
 import java.io.File
 
 fun main() {
-    val grid = File("input").readLines().drop(1).map { it.trim() }
+    val grid = File("input").readLines().map { it.trim() }
     val rows = grid.size
     val cols = grid[0].length
     val target = "XMAS"
