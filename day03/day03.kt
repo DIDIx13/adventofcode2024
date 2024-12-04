@@ -5,12 +5,27 @@ fun main() {
     val content = inputFile.readText()
 
     // Regex to match valid mul(X,Y) where X and Y are 1-3 digit numbers
-    val regex = Regex("""mul\((\d{1,3}),\s*(\d{1,3})\)""")
+    val mulRegex = Regex("""mul\((\d{1,3}),\s*(\d{1,3})\)""")
+    val doRegex = Regex("""do\(\)""")
+    val dontRegex = Regex("""don't\(\)""")
 
-    val sum = regex.findAll(content)
-        .map { it.destructured }
-        .map { (x, y) -> x.toInt() * y.toInt() }
-        .sum()
+    var isEnabled = true
+    var sum = 0
 
-    println("Total sum of all mul operations: $sum")
+    val matches = mulRegex.findAll(content) + doRegex.findAll(content) + dontRegex.findAll(content)
+    matches.sortedBy { it.range.first }.forEach { match ->
+        when {
+            mulRegex.matches(match.value) -> {
+                if (isEnabled) {
+                    val (x, y) = match.destructured
+                    sum += x.toInt() * y.toInt()
+                }
+            }
+
+            doRegex.matches(match.value) -> isEnabled = true
+            dontRegex.matches(match.value) -> isEnabled = false
+        }
+    }
+
+    println("Total sum of all enabled mul operations: $sum");
 }
