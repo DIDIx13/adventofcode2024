@@ -2,7 +2,7 @@
 
 BASE_URL="https://adventofcode.com/2024/day"
 
-SESSION_COOKIE=""
+SESSION_COOKIE="53616c7465645f5fba6739063776e5244c7efdde2b303d5484963281dedd571915a8d2724b6862d87b2e8246d115ebfc5078a398b273c61dfc2f31b18417d29c"
 
 # Loop through days 1 to 25
 for i in $(seq 1 25); do
