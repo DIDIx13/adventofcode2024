@@ -23,4 +23,9 @@
 hs_err_pid*
 replay_pid*
 
-fetch_inputs.sh
+# Inputs and text files
+input
+day??.txt
+
+# Shell scripts
+*.sh
